@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Context } from "../store/appContext.jsx";
 import { EventCards } from "../component/eventCards.jsx";
 import Moment from "react-moment";
@@ -13,9 +12,11 @@ export class Home extends React.Component {
 				return <Moment format="MM/DD/YYYY">{data}</Moment>;
 			}
 			if (format == "time") {
-				let timeArr = data.split(":");
-				let theTime = String(timeArr[0]) + ":" + String(timeArr[1]);
-				return theTime;
+				return (
+					<Moment format="LT" parse="HH:mm:ss">
+						{data}
+					</Moment>
+				);
 			}
 		};
 
@@ -26,7 +27,7 @@ export class Home extends React.Component {
 					<h3>Where friends meet to do stuff</h3>
 				</div>
 				<Context.Consumer>
-					{({ store }) => {
+					{({ store, actions }) => {
 						return store.events.map(event => {
 							if (event) {
 								return (
@@ -40,7 +41,11 @@ export class Home extends React.Component {
 											"time"
 										)}
 										eventTitle={event.post_title}
-										meetup={event.meta_keys._meetup}
+										meetup={actions.findMeetupName(
+											event.meta_keys._meetup
+										)}
+										meetupID={event.meta_keys._meetup}
+										eventID={event.ID}
 										key={event.ID}
 									/>
 								);
